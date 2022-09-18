@@ -1,10 +1,9 @@
-import javax.swing.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-class Main {
-
+public class RunSelectQuery {
     public static void main(String[] args) {
         try{
 
@@ -12,29 +11,21 @@ class Main {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             //creating a connection
-            String url = "jdbc:mysql://localhost:3306/vipuldb";
-            String username="****"; //write your username
+            String url = "jdbc:mysql://localhost:3306/<your database name>";
+            String username="****"; //write your username -> by default its "root"
             String password = "**************"; //write your password
 
             Connection con = DriverManager.getConnection(url, username, password);
 
 
-            //insert large image -> data type should be of longblob
-            String q = "insert into images(pic) values(?)";
+            String q = "select * from table1;";
 
-            PreparedStatement pstmt =  con.prepareStatement(q);
-
-            JFileChooser jfc = new JFileChooser();
-            jfc.showOpenDialog(null);
-
-            File file =jfc.getSelectedFile();
-            FileInputStream fis = new FileInputStream(file);
-
-            pstmt.setBinaryStream(1, fis, fis.available());
-            pstmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(null,"image uploaded..");
-
+            Statement stmt = con.createStatement();
+            ResultSet set =stmt.executeQuery(q);
+            while(set.next()){
+                System.out.println(set.getInt(1)+" : " +
+                        set.getString(2)+" : "+set.getString(3));
+            }
 
         }
         catch(Exception e){
